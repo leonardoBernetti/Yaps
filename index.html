@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alimentazione & Abitudini · Sondaggio scolastico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<style>
+:root{
+  --cream:#FAF7F0;
+  --cream-dark:#F0EBDC;
+  --ink:#1A1A1A;
+  --forest:#2D5016;
+  --forest-light:#4A7C2A;
+  --terracotta:#C8553D;
+  --terracotta-dark:#9C3F2C;
+  --amber:#C68B17;
+  --muted:#6B6B5F;
+  --line:#D9D2BF;
+  --card:#FFFFFF;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Manrope',sans-serif;
+  background:var(--cream);
+  color:var(--ink);
+  font-size:16px;
+  line-height:1.6;
+  font-weight:400;
+}
+
+/* TYPOGRAPHY */
+h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:500;line-height:1.1;letter-spacing:-0.02em}
+h1{font-size:clamp(3rem,8vw,6.5rem);font-weight:300}
+h2{font-size:clamp(2rem,4.5vw,3.5rem)}
+h3{font-size:1.6rem}
+h4{font-size:1.2rem;font-weight:600}
+.eyebrow{
+  font-family:'Manrope',sans-serif;
+  text-transform:uppercase;
+  letter-spacing:0.2em;
+  font-size:0.75rem;
+  font-weight:600;
+  color:var(--terracotta);
+}
+
+/* NAVIGATION */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(250,247,240,0.92);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+  padding:1rem 2rem;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.logo{font-family:'Fraunces',serif;font-size:1.3rem;font-weight:500;font-style:italic}
+.logo span{color:var(--terracotta)}
+nav ul{display:flex;gap:2rem;list-style:none}
+nav a{color:var(--ink);text-decoration:none;font-size:0.9rem;font-weight:500;transition:color 0.2s}
+nav a:hover{color:var(--terracotta)}
+@media(max-width:768px){nav ul{display:none}}
+
+/* CONTAINERS */
+.wrap{max-width:1200px;margin:0 auto;padding:0 2rem}
+section{padding:6rem 0;border-bottom:1px solid var(--line)}
+
+/* HERO */
+.hero{
+  padding:5rem 0 6rem;
+  position:relative;overflow:hidden;
+  border-bottom:1px solid var(--line);
+}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:4rem;align-items:end}
+@media(max-width:900px){.hero-grid{grid-template-columns:1fr;gap:2rem}}
+.hero h1 em{font-style:italic;color:var(--forest)}
+.hero-meta{
+  border-left:2px solid var(--terracotta);
+  padding-left:1.5rem;
+  margin-top:2rem;
+}
+.hero-meta p{color:var(--muted);font-size:0.95rem;margin-bottom:0.3rem}
+.hero-stats{
+  display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem;
+}
+.hero-stat{
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:1.5rem;
+}
+.hero-stat .num{font-family:'Fraunces',serif;font-size:3rem;font-weight:400;color:var(--forest);line-height:1}
+.hero-stat .lbl{font-size:0.8rem;color:var(--muted);margin-top:0.5rem;text-transform:uppercase;letter-spacing:0.1em}
+.hero-decoration{
+  position:absolute;top:2rem;right:-3rem;
+  font-family:'Fraunces',serif;font-style:italic;
+  font-size:14rem;color:var(--cream-dark);
+  z-index:0;line-height:1;font-weight:300;
+  user-select:none;
+}
+.hero > *{position:relative;z-index:1}
+
+/* INTRO */
+.intro-grid{display:grid;grid-template-columns:1fr 2fr;gap:4rem;align-items:start}
+@media(max-width:900px){.intro-grid{grid-template-columns:1fr}}
+.intro-text p{font-size:1.1rem;color:var(--muted);margin-bottom:1rem}
+.intro-text p:first-of-type::first-letter{
+  font-family:'Fraunces',serif;
+  font-size:4rem;
+  float:left;
+  line-height:0.85;
+  margin:0.3rem 0.6rem 0 0;
+  color:var(--forest);
+  font-weight:400;
+}
+.questions-list{list-style:none;counter-reset:q}
+.questions-list li{
+  counter-increment:q;
+  padding:1rem 0;
+  border-bottom:1px solid var(--line);
+  display:flex;gap:1rem;align-items:baseline;
+}
+.questions-list li::before{
+  content:"0" counter(q);
+  font-family:'Fraunces',serif;
+  font-style:italic;
+  color:var(--terracotta);
+  font-size:1.1rem;
+  min-width:2rem;
+}
+
+/* RESULTS */
+.results-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:3rem}
+@media(max-width:768px){.results-grid{grid-template-columns:1fr}}
+.result-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:2rem;
+  position:relative;
+}
+.result-card .num-tag{
+  position:absolute;top:-1px;left:2rem;
+  background:var(--ink);color:var(--cream);
+  font-family:'Fraunces',serif;font-style:italic;
+  padding:0.3rem 0.8rem;font-size:0.85rem;
+}
+.result-card h3{margin:1.5rem 0 0.5rem;font-size:1.4rem}
+.result-card .question{color:var(--muted);font-size:0.9rem;margin-bottom:1.5rem;font-style:italic}
+.chart-wrap{position:relative;height:240px;margin-bottom:1rem}
+.result-card .takeaway{
+  font-size:0.9rem;
+  padding-top:1rem;
+  border-top:1px dashed var(--line);
+  color:var(--ink);
+}
+.result-card .takeaway strong{color:var(--terracotta)}
+
+/* COMPARISON */
+.comparison-section{background:var(--cream-dark);margin:0 -2rem;padding:6rem 2rem}
+.comparison-intro{max-width:700px;margin-bottom:3rem}
+.compare-table{
+  background:var(--card);
+  border:1px solid var(--line);
+}
+.compare-row{
+  display:grid;
+  grid-template-columns:2fr 3fr 1fr;
+  gap:1rem;
+  padding:1.5rem 2rem;
+  border-bottom:1px solid var(--line);
+  align-items:center;
+}
+.compare-row:last-child{border-bottom:none}
+.compare-row.head{
+  background:var(--ink);color:var(--cream);
+  font-size:0.75rem;text-transform:uppercase;letter-spacing:0.15em;
+  padding:1rem 2rem;font-weight:600;
+}
+@media(max-width:700px){
+  .compare-row{grid-template-columns:1fr;gap:0.8rem}
+  .compare-row.head{display:none}
+}
+.compare-label{font-weight:500;font-size:1rem}
+.compare-bars{display:flex;flex-direction:column;gap:0.4rem;font-size:0.85rem}
+.bar-row{display:flex;align-items:center;gap:0.6rem}
+.bar-row .lbl{min-width:60px;color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em}
+.bar-track{flex:1;height:14px;background:var(--cream-dark);position:relative;border:1px solid var(--line)}
+.bar-fill{height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:0.4rem;color:white;font-size:0.7rem;font-weight:600}
+.bar-fill.school{background:var(--forest)}
+.bar-fill.national{background:var(--muted);opacity:0.5}
+.status-badge{
+  font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;
+  padding:0.3rem 0.7rem;display:inline-block;text-align:center;
+}
+.status-badge.bad{background:#FBE6E1;color:var(--terracotta-dark);border:1px solid var(--terracotta)}
+.status-badge.good{background:#E5EFD9;color:var(--forest);border:1px solid var(--forest)}
+.status-badge.neutral{background:#F5EBD3;color:var(--amber);border:1px solid var(--amber)}
+
+/* CONCLUSIONS */
+.concl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+@media(max-width:900px){.concl-grid{grid-template-columns:1fr}}
+.concl-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:2rem;
+  position:relative;
+  overflow:hidden;
+}
+.concl-card::before{
+  content:"";
+  position:absolute;top:0;left:0;right:0;height:4px;
+}
+.concl-card.bad::before{background:var(--terracotta)}
+.concl-card.good::before{background:var(--forest)}
+.concl-card.idea::before{background:var(--amber)}
+.concl-card .ic{
+  font-family:'Fraunces',serif;font-style:italic;
+  font-size:0.9rem;letter-spacing:0.15em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.concl-card.bad .ic{color:var(--terracotta)}
+.concl-card.good .ic{color:var(--forest)}
+.concl-card.idea .ic{color:var(--amber)}
+.concl-card h3{font-size:1.3rem;margin-bottom:1rem}
+.concl-card ul{list-style:none}
+.concl-card li{
+  padding:0.7rem 0;
+  border-bottom:1px solid var(--line);
+  font-size:0.95rem;
+}
+.concl-card li:last-child{border-bottom:none}
+
+/* CHI SIAMO */
+.chi-siamo{background:var(--ink);color:var(--cream);margin:0 -2rem;padding:6rem 2rem;border:none}
+.chi-siamo .eyebrow{color:#E8A079}
+.chi-siamo h2{color:var(--cream)}
+.chi-siamo > .wrap > p{color:#A8A89A;max-width:600px;margin-bottom:3rem;font-size:1.1rem}
+.team-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem}
+.member{
+  background:#262624;
+  border:1px solid #3A3A36;
+  padding:2rem;
+  position:relative;
+  transition:transform 0.3s ease, border-color 0.3s ease;
+}
+.member:hover{transform:translateY(-4px);border-color:var(--terracotta)}
+.member .avatar{
+  width:60px;height:60px;
+  background:var(--terracotta);
+  color:var(--cream);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:1.5rem;font-style:italic;
+  margin-bottom:1.5rem;
+  border-radius:50%;
+}
+.member h4{color:var(--cream);font-family:'Fraunces',serif;font-weight:500;margin-bottom:0.3rem}
+.member .role{font-size:0.8rem;color:#E8A079;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem}
+.member .bio{color:#A8A89A;font-size:0.85rem;line-height:1.5}
+.member .num-corner{
+  position:absolute;top:1rem;right:1.5rem;
+  font-family:'Fraunces',serif;font-style:italic;
+  color:#3A3A36;font-size:1.3rem;
+}
+
+/* FOOTER */
+footer{background:var(--ink);color:var(--cream);padding:3rem 2rem;text-align:center;border:none}
+footer p{color:#A8A89A;font-size:0.85rem;margin-bottom:0.5rem}
+footer .source{font-style:italic;color:#7A7A6E;font-size:0.8rem}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp 0.8s ease-out backwards}
+.fade-in:nth-child(2){animation-delay:0.1s}
+.fade-in:nth-child(3){animation-delay:0.2s}
+.fade-in:nth-child(4){animation-delay:0.3s}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">F·M·C <span>·</span> <em>il sondaggio</em></div>
+  <ul>
+    <li><a href="#overview">Panoramica</a></li>
+    <li><a href="#risultati">Risultati</a></li>
+    <li><a href="#confronto">Confronto</a></li>
+    <li><a href="#conclusioni">Conclusioni</a></li>
+    <li><a href="crediti.html">Chi siamo</a></li>
+  </ul>
+</nav>
+
+<header class="hero">
+  <div class="hero-decoration">65</div>
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="fade-in">
+        <div class="eyebrow">Sondaggio scolastico · A.S. 2024/25</div>
+        <h1 style="margin-top:1.5rem;">Alimentazione<br>&amp; <em>abitudini</em>.</h1>
+        <div class="hero-meta">
+          <p>Un'indagine condotta tra gli studenti del nostro istituto</p>
+          <p>per capire come mangiamo, beviamo e ci muoviamo.</p>
+        </div>
+      </div>
+      <div class="hero-stats fade-in">
+        <div class="hero-stat"><div class="num">65</div><div class="lbl">risposte raccolte</div></div>
+        <div class="hero-stat"><div class="num">6</div><div class="lbl">domande chiave</div></div>
+        <div class="hero-stat"><div class="num">52%</div><div class="lbl">beve gassate spesso</div></div>
+        <div class="hero-stat"><div class="num">46%</div><div class="lbl">fa 4+ ore di sport</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="overview">
+  <div class="wrap">
+    <div class="intro-grid">
+      <div>
+        <div class="eyebrow">L'indagine</div>
+        <h2 style="margin-top:1rem;">Come<br><em>mangiamo</em>.</h2>
+      </div>
+      <div class="intro-text">
+        <p>Abbiamo creato un sondaggio anonimo su Google Forms e l'abbiamo distribuito agli studenti dell'istituto. In totale hanno risposto 65 ragazzi, fornendo una fotografia delle nostre abitudini quotidiane: dalla colazione del mattino all'attività fisica, passando per il consumo di acqua e bibite gassate.</p>
+        <p>I risultati sono stati poi confrontati con i dati ufficiali della Sorveglianza HBSC-Italia 2022, condotta dall'Istituto Superiore di Sanità su un campione nazionale di oltre 89.000 adolescenti.</p>
+        <h4 style="margin-top:2.5rem;margin-bottom:1rem;">Le domande del sondaggio</h4>
+        <ul class="questions-list">
+          <li>Prima di venire a scuola, fai colazione?</li>
+          <li>Quanto spesso bevi bibite gassate?</li>
+          <li>Quanta acqua bevi durante la tua giornata?</li>
+          <li>Quante volte consumi cibi confezionati o già pronti?</li>
+          <li>Pensi di fare abbastanza attività fisica?</li>
+          <li>Quante ore a settimana dedichi allo sport?</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="risultati">
+  <div class="wrap">
+    <div class="eyebrow">I dati</div>
+    <h2 style="margin-top:1rem;max-width:700px;">Sei domande,<br>sei <em>risposte</em>.</h2>
+
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="num-tag">01</div>
+        <h3>Colazione</h3>
+        <p class="question">Prima di venire a scuola, fai colazione?</p>
+        <div class="chart-wrap"><canvas id="c1"></canvas></div>
+        <p class="takeaway"><strong>1 su 3</strong> non fa mai colazione, contro una media nazionale del 27%.</p>
+      </div>
+
+      <div class="result-card">
+        <div class="num-tag">02</div>
+        <h3>Bibite gassate</h3>
+        <p class="question">Quanto spesso bevi bibite gassate?</p>
+        <div class="chart-wrap"><canvas id="c2"></canvas></div>
+        <p class="takeaway"><strong>52%</strong> le beve spesso o sempre — più del doppio della media italiana.</p>
+      </div>
+
+      <div class="result-card">
+        <div class="num-tag">03</div>
+        <h3>Acqua</h3>
+        <p class="question">Quanta acqua bevi durante la tua giornata?</p>
+        <div class="chart-wrap"><canvas id="c3"></canvas></div>
+        <p class="takeaway"><strong>62%</strong> beve solo ½–1 L al giorno, ben sotto la soglia raccomandata di 1,5–2 L.</p>
+      </div>
+
+      <div class="result-card">
+        <div class="num-tag">04</div>
+        <h3>Cibi confezionati</h3>
+        <p class="question">Quante volte consumi cibi confezionati o già pronti?</p>
+        <div class="chart-wrap"><canvas id="c4"></canvas></div>
+        <p class="takeaway">Solo il <strong>15%</strong> li mangia spesso. La maggioranza li consuma "qualche volta".</p>
+      </div>
+
+      <div class="result-card">
+        <div class="num-tag">05</div>
+        <h3>Percezione del movimento</h3>
+        <p class="question">Pensi di fare abbastanza attività fisica?</p>
+        <div class="chart-wrap"><canvas id="c5"></canvas></div>
+        <p class="takeaway">Il <strong>60%</strong> si sente fisicamente attivo: una percezione positiva.</p>
+      </div>
+
+      <div class="result-card">
+        <div class="num-tag">06</div>
+        <h3>Ore di sport</h3>
+        <p class="question">Quante ore a settimana dedichi allo sport?</p>
+        <div class="chart-wrap"><canvas id="c6"></canvas></div>
+        <p class="takeaway"><strong>46%</strong> fa 4+ ore — quasi il doppio della media nazionale italiana.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="confronto" class="comparison-section">
+  <div class="wrap">
+    <div class="comparison-intro">
+      <div class="eyebrow">Noi vs. Italia</div>
+      <h2 style="margin-top:1rem;">Dove ci <em>discostiamo</em>?</h2>
+      <p style="color:var(--muted);margin-top:1rem;font-size:1.05rem;">
+        Confronto tra i dati della nostra scuola e la media nazionale italiana,
+        secondo la Sorveglianza HBSC-Italia 2022 dell'Istituto Superiore di Sanità.
+      </p>
+    </div>
+
+    <div class="compare-table">
+      <div class="compare-row head">
+        <div>Indicatore</div>
+        <div>Confronto</div>
+        <div style="text-align:center">Stato</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Bibite gassate (spesso/sempre)</div>
+        <div class="compare-bars">
+          <div class="bar-row"><span class="lbl">Noi</span><div class="bar-track"><div class="bar-fill school" style="width:52%">52%</div></div></div>
+          <div class="bar-row"><span class="lbl">Italia</span><div class="bar-track"><div class="bar-fill national" style="width:23%">23%</div></div></div>
+        </div>
+        <div style="text-align:center"><span class="status-badge bad">Peggio</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Sport regolare (4+ ore/sett.)</div>
+        <div class="compare-bars">
+          <div class="bar-row"><span class="lbl">Noi</span><div class="bar-track"><div class="bar-fill school" style="width:46%">46%</div></div></div>
+          <div class="bar-row"><span class="lbl">Italia</span><div class="bar-track"><div class="bar-fill national" style="width:25%">25%</div></div></div>
+        </div>
+        <div style="text-align:center"><span class="status-badge good">Meglio</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Non fa mai colazione</div>
+        <div class="compare-bars">
+          <div class="bar-row"><span class="lbl">Noi</span><div class="bar-track"><div class="bar-fill school" style="width:31%">31%</div></div></div>
+          <div class="bar-row"><span class="lbl">Italia</span><div class="bar-track"><div class="bar-fill national" style="width:27%">27%</div></div></div>
+        </div>
+        <div style="text-align:center"><span class="status-badge bad">Peggio</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Fa colazione ogni giorno</div>
+        <div class="compare-bars">
+          <div class="bar-row"><span class="lbl">Noi</span><div class="bar-track"><div class="bar-fill school" style="width:51%">51%</div></div></div>
+          <div class="bar-row"><span class="lbl">Italia</span><div class="bar-track"><div class="bar-fill national" style="width:54%">54%</div></div></div>
+        </div>
+        <div style="text-align:center"><span class="status-badge neutral">In linea</span></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-label">Acqua sufficiente (2+ L/giorno)</div>
+        <div class="compare-bars">
+          <div class="bar-row"><span class="lbl">Noi</span><div class="bar-track"><div class="bar-fill school" style="width:20%">20%</div></div></div>
+          <div class="bar-row"><span class="lbl">Italia</span><div class="bar-track"><div class="bar-fill national" style="width:22%">22%</div></div></div>
+        </div>
+        <div style="text-align:center"><span class="status-badge neutral">In linea</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="conclusioni">
+  <div class="wrap">
+    <div class="eyebrow">Cosa abbiamo imparato</div>
+    <h2 style="margin-top:1rem;max-width:700px;">Le <em>conclusioni</em>.</h2>
+
+    <div class="concl-grid">
+      <div class="concl-card bad">
+        <div class="ic">— Criticità</div>
+        <h3>Cosa va migliorato</h3>
+        <ul>
+          <li>Bibite gassate consumate molto più della media nazionale</li>
+          <li>Idratazione insufficiente: solo il 20% beve abbastanza acqua</li>
+          <li>Colazione saltata da 1 studente su 3</li>
+        </ul>
+      </div>
+      <div class="concl-card good">
+        <div class="ic">— Punti di forza</div>
+        <h3>Cosa va bene</h3>
+        <ul>
+          <li>Attività fisica regolare ben sopra la media italiana</li>
+          <li>Cibi confezionati limitati: solo il 15% li mangia spesso</li>
+          <li>60% degli studenti ha una percezione positiva del proprio movimento</li>
+        </ul>
+      </div>
+      <div class="concl-card idea">
+        <div class="ic">— Proposte</div>
+        <h3>Cosa possiamo fare</h3>
+        <ul>
+          <li>Campagna di sensibilizzazione sull'idratazione</li>
+          <li>Ridurre l'offerta di bibite gassate nelle macchinette</li>
+          <li>Promuovere l'importanza della prima colazione</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="chi-siamo-cta" class="chi-siamo">
+  <div class="wrap" style="text-align:center;">
+    <div class="eyebrow" style="color:#E8A079;">Crediti</div>
+    <h2 style="margin-top:1rem;color:var(--cream);">Chi <em>siamo</em>.</h2>
+    <p style="color:#A8A89A;max-width:600px;margin:1.5rem auto 2.5rem;font-size:1.1rem;">
+      Scopri il team che ha realizzato questo sondaggio: studenti e professori dell'Istituto Rosselli-Rasetti.
+    </p>
+    <a href="crediti.html" style="display:inline-block;background:var(--terracotta);color:var(--cream);padding:1rem 2rem;text-decoration:none;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;font-size:0.85rem;transition:background 0.2s;" onmouseover="this.style.background='#9C3F2C'" onmouseout="this.style.background='#C8553D'">Vai alla pagina crediti →</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong style="color:var(--cream)">Sondaggio Alimentazione &amp; Abitudini</strong></p>
+  <p>Istituto Omnicomprensivo Rosselli-Rasetti · Castiglione del Lago · A.S. 2024/25</p>
+  <p class="source">Dati nazionali: Sorveglianza HBSC-Italia 2022 — Istituto Superiore di Sanità</p>
+</footer>
+
+<script>
+const COLORS = {
+  forest:'#2D5016', forestL:'#4A7C2A', forestX:'#7BA64E',
+  terracotta:'#C8553D', terraD:'#9C3F2C',
+  amber:'#C68B17', muted:'#6B6B5F', cream:'#F0EBDC',
+  ink:'#1A1A1A',
+};
+
+Chart.defaults.font.family = 'Manrope, sans-serif';
+Chart.defaults.color = COLORS.muted;
+Chart.defaults.borderColor = '#D9D2BF';
+
+const doughnut = (id, labels, values, colors) => new Chart(document.getElementById(id), {
+  type:'doughnut',
+  data:{labels,datasets:[{data:values,backgroundColor:colors,borderColor:'#FFFFFF',borderWidth:2}]},
+  options:{
+    responsive:true, maintainAspectRatio:false, cutout:'58%',
+    plugins:{
+      legend:{position:'bottom',labels:{boxWidth:10,boxHeight:10,padding:12,font:{size:11}}},
+      tooltip:{callbacks:{label:(c)=>` ${c.label}: ${c.raw} (${Math.round(c.raw/c.dataset.data.reduce((a,b)=>a+b)*100)}%)`}}
+    }
+  }
+});
+
+const horizontalBar = (id, labels, values, colors) => new Chart(document.getElementById(id), {
+  type:'bar',
+  data:{labels,datasets:[{data:values,backgroundColor:colors,borderRadius:3,borderSkipped:false}]},
+  options:{
+    indexAxis:'y',
+    responsive:true, maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{callbacks:{label:(c)=>` ${c.raw} risposte`}}
+    },
+    scales:{
+      x:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{size:10}}},
+      y:{grid:{display:false},ticks:{font:{size:11}}}
+    }
+  }
+});
+
+doughnut('c1', ['Sì','No','Qualche volta'], [33,20,12],
+  [COLORS.forest, COLORS.terracotta, COLORS.amber]);
+
+horizontalBar('c2', ['Mai','Raramente','Spesso (2-3x/sett.)','Sempre'], [4,27,24,10],
+  [COLORS.forest, COLORS.forestL, COLORS.amber, COLORS.terracotta]);
+
+horizontalBar('c3', ['< 1 L','½ – 1 L','> 2 L'], [12,40,13],
+  [COLORS.terracotta, COLORS.amber, COLORS.forest]);
+
+doughnut('c4', ['Mai','Raramente','Qualche volta','Spesso'], [5,12,38,10],
+  [COLORS.forest, COLORS.forestL, COLORS.amber, COLORS.terracotta]);
+
+doughnut('c5', ['Sì, abbastanza','No, non abbastanza'], [39,26],
+  [COLORS.forest, COLORS.terracotta]);
+
+horizontalBar('c6', ['< 1 ora','1–2 ore','2–3 ore','4+ ore'], [11,12,12,30],
+  [COLORS.muted, COLORS.amber, COLORS.forestL, COLORS.forest]);
+</script>
+
+</body>
+</html>
